@@ -32,6 +32,10 @@ fun SmartImage(current: String?, onUri: (String?) -> Unit) {
     val context = LocalContext.current
     var cameraUri by remember { mutableStateOf<Uri?>(null) }
 
+    val takePicture = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { success -> if (success) onUri(cameraUri?.toString()) }
+
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -45,10 +49,6 @@ fun SmartImage(current: String?, onUri: (String?) -> Unit) {
     val pickImage = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri -> onUri(uri?.toString()) }
-
-    val takePicture = rememberLauncherForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { success -> if (success) onUri(cameraUri?.toString()) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         if (current != null) {
