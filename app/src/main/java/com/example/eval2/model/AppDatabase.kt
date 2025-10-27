@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Service::class, ServiceOrder::class], version = 1)
+@Database(entities = [Service::class, ServiceOrder::class, User::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serviceDao(): ServiceDao
     abstract fun orderDao(): OrderDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -18,7 +19,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "eval2.db"
-                ).build()
+                )
+                .fallbackToDestructiveMigration()
+                .build()
                 INSTANCE = inst
                 inst
             }

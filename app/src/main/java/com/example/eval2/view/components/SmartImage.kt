@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -59,7 +60,7 @@ fun SmartImage(current: String?, onUri: (String?) -> Unit) {
             )
         } else {
             Icon(
-                imageVector = Icons.Default.AccountCircle,
+                imageVector = Icons.Default.AddCircle,
                 contentDescription = null,
                 tint = Color.Gray,
                 modifier = Modifier.size(150.dp)

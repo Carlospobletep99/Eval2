@@ -11,15 +11,22 @@ import com.example.eval2.view.components.SmartImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, onSaved: () -> Unit) {
+fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int, onSaved: () -> Unit) {
     val st by vm.state.collectAsState()
     val services by serviceVM.services.collectAsState()
-    LaunchedEffect(Unit) { serviceVM.cargar() }
+    
+    LaunchedEffect(userId) { 
+        serviceVM.cargar()
+        if(userId != -1) {
+            vm.loadUser(userId)
+        }
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
         OutlinedTextField(
-            value = st.clientName, onValueChange = vm::onClientChange,
+            value = st.clientName, onValueChange = {},
+            readOnly = true, // Block editing
             label = { Text("Nombre cliente") }, isError = st.errors.clientName != null,
             supportingText = { st.errors.clientName?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             modifier = Modifier.fillMaxWidth()
@@ -58,8 +65,10 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, onSaved: ()
         SmartImage(current = st.photoUri, onUri = vm::onPhotoChange)
 
         Button(onClick = {
-            vm.guardarOrden()
-            if (vm.validar()) onSaved()
+            if (vm.validar()) {
+                vm.guardarOrden()
+                onSaved()
+            }
         }, modifier = Modifier.fillMaxWidth()) {
             Text("Agendar servicio")
         }

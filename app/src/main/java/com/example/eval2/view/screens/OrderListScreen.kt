@@ -12,25 +12,35 @@ import com.example.eval2.viewmodel.OrderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderListScreen(vm: OrderViewModel) {
+fun OrderListScreen(vm: OrderViewModel, modoTecnico: Boolean, clientName: String? = null) {
     val orders by vm.orders.collectAsState()
     var filtro by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) { vm.cargarOrdenes() }
+    LaunchedEffect(clientName) {
+        if (clientName != null) {
+            vm.buscarPorCliente(clientName)
+        } else {
+            vm.cargarOrdenes()
+        }
+    }
 
     Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedTextField(
-            value = filtro, onValueChange = {
-                filtro = it
-                if (it.isBlank()) vm.cargarOrdenes() else vm.buscarPorCliente(it)
-            },
-            label = { Text("Filtrar por cliente") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (modoTecnico) {
+            OutlinedTextField(
+                value = filtro, onValueChange = {
+                    filtro = it
+                    if (it.isBlank()) vm.cargarOrdenes() else vm.buscarPorCliente(it)
+                },
+                label = { Text("Filtrar por cliente") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            Text("Mis Órdenes", style = MaterialTheme.typography.headlineMedium)
+        }
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(orders) { o ->
-                OrderRow(o, onEstado = { est -> vm.actualizarEstado(o, est) })
+                OrderRow(o, modoTecnico = modoTecnico, onEstado = { est -> vm.actualizarEstado(o, est) })
             }
         }
     }
@@ -38,7 +48,7 @@ fun OrderListScreen(vm: OrderViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun OrderRow(o: ServiceOrder, onEstado: (String) -> Unit) {
+private fun OrderRow(o: ServiceOrder, modoTecnico: Boolean, onEstado: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     ElevatedCard {
         Column(Modifier.padding(12.dp)) {
@@ -46,10 +56,11 @@ private fun OrderRow(o: ServiceOrder, onEstado: (String) -> Unit) {
             Text("Estado: ${o.status}")
             Text("Notas: ${o.notes}")
             Spacer(Modifier.height(8.dp))
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { if (modoTecnico) expanded = !expanded }) {
                 OutlinedTextField(
                     value = o.status, onValueChange = {}, readOnly = true, label = { Text("Cambiar estado") },
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    enabled = modoTecnico
                 )
                 ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     listOf("PENDIENTE","EN_PROCESO","FINALIZADO").forEach { st ->

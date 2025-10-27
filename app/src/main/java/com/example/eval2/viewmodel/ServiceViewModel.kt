@@ -21,6 +21,13 @@ class ServiceViewModel(private val repo: ServiceRepository) : ViewModel() {
         }
     }
 
+    fun actualizar(id: Int, name: String, desc: String, price: Double) {
+        viewModelScope.launch {
+            repo.upsert(Service(id = id, name = name, description = desc, price = price))
+            cargar()
+        }
+    }
+
     fun eliminar(svc: Service) {
         viewModelScope.launch { repo.delete(svc); cargar() }
     }

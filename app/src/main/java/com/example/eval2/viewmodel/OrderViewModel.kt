@@ -3,19 +3,29 @@ package com.example.eval2.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eval2.model.ServiceOrder
+import com.example.eval2.model.UserDao
 import com.example.eval2.repository.OrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class OrderViewModel(private val repo: OrderRepository) : ViewModel() {
+class OrderViewModel(private val repo: OrderRepository, private val userDao: UserDao) : ViewModel() {
 
     private val _state = MutableStateFlow(OrderUIState())
     val state: StateFlow<OrderUIState> = _state
 
     private val _orders = MutableStateFlow<List<ServiceOrder>>(emptyList())
     val orders: StateFlow<List<ServiceOrder>> = _orders
+    
+    fun loadUser(userId: Int) {
+        viewModelScope.launch {
+            val user = userDao.findById(userId)
+            if(user != null) {
+                _state.update { it.copy(clientName = "${user.firstName} ${user.lastName}") }
+            }
+        }
+    }
 
     fun onClientChange(v: String) =
         _state.update { it.copy(clientName = v, errors = it.errors.copy(clientName = null)) }
