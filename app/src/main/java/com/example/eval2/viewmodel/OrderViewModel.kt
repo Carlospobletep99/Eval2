@@ -10,6 +10,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+data class OrderErrors(
+    val clientName: String? = null,
+    val serviceId: String? = null,
+    val scheduleDate: String? = null
+)
+
+data class OrderUIState(
+    val clientName: String = "",
+    val serviceId: Int? = null,
+    val scheduleDate: String = "",
+    val notes: String = "",
+    val photoUri: String? = null,
+    val errors: OrderErrors = OrderErrors()
+)
+
 class OrderViewModel(private val repo: OrderRepository, private val userDao: UserDao) : ViewModel() {
 
     private val _state = MutableStateFlow(OrderUIState())

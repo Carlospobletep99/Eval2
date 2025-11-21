@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun SmartImage(current: String?, onUri: (String?) -> Unit) {
+fun SmartImage(current: String?, onUri: (String?) -> Unit, readOnly: Boolean = false) {
     val context = LocalContext.current
     var cameraUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -69,20 +68,25 @@ fun SmartImage(current: String?, onUri: (String?) -> Unit) {
             )
         }
         Spacer(Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { pickImage.launch("image/*") }) { Text("Galería") }
-            Button(onClick = {
-                val granted = ContextCompat.checkSelfPermission(
-                    context, Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED
-                if (granted) {
-                    val uri = createImageUri(context)
-                    cameraUri = uri
-                    takePicture.launch(uri)
-                } else {
-                    permissionLauncher.launch(Manifest.permission.CAMERA)
+        if (!readOnly) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { pickImage.launch("image/*") }) { Text("Galería") }
+                Button(onClick = {
+                    val granted = ContextCompat.checkSelfPermission(
+                        context, Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED
+                    if (granted) {
+                        val uri = createImageUri(context)
+                        cameraUri = uri
+                        takePicture.launch(uri)
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                }) { Text("Cámara") }
+                if (current != null) {
+                    Button(onClick = { onUri(null) }) { Text("Borrar") }
                 }
-            }) { Text("Cámara") }
+            }
         }
     }
 }

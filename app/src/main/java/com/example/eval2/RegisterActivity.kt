@@ -7,10 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,6 +26,7 @@ import com.example.eval2.model.User
 import kotlinx.coroutines.launch
 
 class RegisterActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,98 +40,83 @@ class RegisterActivity : ComponentActivity() {
                 var email by remember { mutableStateOf("") }
                 var password by remember { mutableStateOf("") }
                 var confirmPassword by remember { mutableStateOf("") }
-                val roles = listOf("cliente", "tecnico")
-                var selectedRole by remember { mutableStateOf(roles[0]) }
-                
-                var firstNameError by remember { mutableStateOf(false) }
-                var lastNameError by remember { mutableStateOf(false) }
-                var emailError by remember { mutableStateOf(false) }
-                var passwordError by remember { mutableStateOf(false) }
-                var confirmPasswordError by remember { mutableStateOf(false) }
+
+                var firstNameError by remember { mutableStateOf<String?>(null) }
+                var lastNameError by remember { mutableStateOf<String?>(null) }
+                var emailError by remember { mutableStateOf<String?>(null) }
+                var passwordError by remember { mutableStateOf<String?>(null) }
+                var confirmPasswordError by remember { mutableStateOf<String?>(null) }
 
                 val context = LocalContext.current
 
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = "Login Icon",
-                        modifier = Modifier.size(100.dp),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
-
-
-                    OutlinedTextField(value = firstName, onValueChange = { firstName = it; firstNameError = false }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth(), isError = firstNameError)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(value = lastName, onValueChange = { lastName = it; lastNameError = false }, label = { Text("Apellido") }, modifier = Modifier.fillMaxWidth(), isError = lastNameError)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(value = email, onValueChange = { email = it; emailError = false }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth(), isError = emailError, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(value = password, onValueChange = { password = it; passwordError = false }, label = { Text("Contraseña") }, modifier = Modifier.fillMaxWidth(), isError = passwordError, visualTransformation = PasswordVisualTransformation())
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(value = confirmPassword, onValueChange = { confirmPassword = it; confirmPasswordError = false }, label = { Text("Confirmar Contraseña") }, modifier = Modifier.fillMaxWidth(), isError = confirmPasswordError, visualTransformation = PasswordVisualTransformation())
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        roles.forEach { role ->
-                            Row(Modifier.selectable(selected = (selectedRole == role), onClick = { selectedRole = role }).padding(horizontal = 16.dp)) {
-                                RadioButton(selected = (selectedRole == role), onClick = { selectedRole = role })
-                                Text(text = role.replaceFirstChar { it.uppercase() }, modifier = Modifier.align(Alignment.CenterVertically))
+                Scaffold(
+                    topBar = {
+                        TopAppBar(
+                            title = { Text("Registro") },
+                            navigationIcon = {
+                                IconButton(onClick = { finish() }) {
+                                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Volver")
+                                }
                             }
-                        }
+                        )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(
-                        onClick = {
-                            firstNameError = firstName.isBlank()
-                            lastNameError = lastName.isBlank()
-                            emailError = !Patterns.EMAIL_ADDRESS.matcher(email).matches()
-                            passwordError = password.length < 6
-                            confirmPasswordError = password != confirmPassword
+                ) { padding ->
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
-                            val hasError = firstNameError || lastNameError || emailError || passwordError || confirmPasswordError
-                            if (!hasError) {
-                                lifecycleScope.launch {
-                                    if (userDao.findByEmail(email) == null) {
-                                        val user = User(firstName = firstName, lastName = lastName, email = email, passwordHash = password, role = selectedRole)
-                                        userDao.insert(user)
-                                        Toast.makeText(context, "Registro Exitoso.", Toast.LENGTH_SHORT).show()
-                                        finish()
-                                    } else {
-                                        Toast.makeText(context, "El Correo ya esta registrado.", Toast.LENGTH_SHORT).show()
-                                        emailError = true
+
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Login Icon",
+                            modifier = Modifier.size(100.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+
+
+                        OutlinedTextField(value = firstName, onValueChange = { firstName = it; firstNameError = null }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth(), isError = firstNameError != null)
+                        firstNameError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(value = lastName, onValueChange = { lastName = it; lastNameError = null }, label = { Text("Apellido") }, modifier = Modifier.fillMaxWidth(), isError = lastNameError != null)
+                        lastNameError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(value = email, onValueChange = { email = it; emailError = null }, label = { Text("Email") }, modifier = Modifier.fillMaxWidth(), isError = emailError != null, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email))
+                        emailError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(value = password, onValueChange = { password = it; passwordError = null }, label = { Text("Contraseña") }, modifier = Modifier.fillMaxWidth(), isError = passwordError != null, visualTransformation = PasswordVisualTransformation())
+                        passwordError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(value = confirmPassword, onValueChange = { confirmPassword = it; confirmPasswordError = null }, label = { Text("Confirmar Contraseña") }, modifier = Modifier.fillMaxWidth(), isError = confirmPasswordError != null, visualTransformation = PasswordVisualTransformation())
+                        confirmPasswordError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                firstNameError = if (firstName.isBlank()) "El nombre es requerido." else null
+                                lastNameError = if (lastName.isBlank()) "El apellido es requerido." else null
+                                emailError = if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) "El email no es válido." else null
+                                passwordError = if (password.length < 6) "La contraseña debe tener al menos 6 caracteres." else null
+                                confirmPasswordError = if (password != confirmPassword) "Las contraseñas no coinciden." else null
+
+                                val hasError = listOf(firstNameError, lastNameError, emailError, passwordError, confirmPasswordError).any { it != null }
+                                if (!hasError) {
+                                    lifecycleScope.launch {
+                                        if (userDao.findByEmail(email) == null) {
+                                            val user = User(firstName = firstName, lastName = lastName, email = email, passwordHash = password, role = "cliente")
+                                            userDao.insert(user)
+                                            Toast.makeText(context, "Registro Exitoso.", Toast.LENGTH_SHORT).show()
+                                            finish()
+                                        } else {
+                                            emailError = "El correo ya está registrado."
+                                        }
                                     }
                                 }
-                            }
-                            else {
-                                if (firstNameError){
-                                    Toast.makeText(context, "El nombre es requerido.", Toast.LENGTH_SHORT).show()
-                                }
-                                else if (lastNameError){
-                                    Toast.makeText(context, "El apellido es requerido.", Toast.LENGTH_SHORT).show()
-                                }
-                                else if (emailError){
-                                    Toast.makeText(context, "El email no es valido.", Toast.LENGTH_SHORT).show()
-                                }
-                                else if (passwordError){
-                                    Toast.makeText(context, "La contraseña debe tener al menos 6 caracteres.", Toast.LENGTH_SHORT).show()
-                                }
-                                else if (confirmPasswordError){
-                                    Toast.makeText(context, "Las contraseñas no coinciden.", Toast.LENGTH_SHORT).show()
-                                }
-                                else{
-                                    Toast.makeText(context, "Por favor, corrija la informacion en los campos resaltados.", Toast.LENGTH_SHORT).show()
-
-                                }
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) { Text("Registrar") }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) { Text("Registrar") }
+                    }
                 }
             }
         }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.eval2.model.ServiceOrder
+import com.example.eval2.view.components.SmartImage
 import com.example.eval2.viewmodel.OrderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +25,7 @@ fun OrderListScreen(vm: OrderViewModel, modoTecnico: Boolean, clientName: String
         }
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (modoTecnico) {
             OutlinedTextField(
                 value = filtro, onValueChange = {
@@ -55,6 +56,9 @@ private fun OrderRow(o: ServiceOrder, modoTecnico: Boolean, onEstado: (String) -
             Text("${o.clientName} · ${o.scheduleDate}", style = MaterialTheme.typography.titleMedium)
             Text("Estado: ${o.status}")
             Text("Notas: ${o.notes}")
+            o.photoUri?.let { uri ->
+                SmartImage(uri, onUri = {}, readOnly = true)
+            }
             Spacer(Modifier.height(8.dp))
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { if (modoTecnico) expanded = !expanded }) {
                 OutlinedTextField(

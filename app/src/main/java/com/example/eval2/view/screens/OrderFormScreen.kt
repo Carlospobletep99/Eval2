@@ -22,7 +22,7 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
         }
     }
 
-    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
         OutlinedTextField(
             value = st.clientName, onValueChange = {},
