@@ -8,14 +8,15 @@ import androidx.compose.ui.unit.dp
 import com.example.eval2.viewmodel.OrderViewModel
 import com.example.eval2.viewmodel.ServiceViewModel
 import com.example.eval2.view.components.SmartImage
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int, onSaved: () -> Unit) {
     val st by vm.state.collectAsState()
     val services by serviceVM.services.collectAsState()
-    
-    LaunchedEffect(userId) { 
+
+    LaunchedEffect(userId) {
         serviceVM.cargar()
         if(userId != -1) {
             vm.loadUser(userId)
@@ -23,6 +24,8 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
     }
 
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+
+        Text("Nueva Orden de Servicio", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
 
         OutlinedTextField(
             value = st.clientName, onValueChange = {},
@@ -62,6 +65,7 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
             label = { Text("Notas") }, modifier = Modifier.fillMaxWidth()
         )
 
+        Text("Adjuntar imagen (opcional)", style = MaterialTheme.typography.bodyLarge)
         SmartImage(current = st.photoUri, onUri = vm::onPhotoChange)
 
         Button(onClick = {

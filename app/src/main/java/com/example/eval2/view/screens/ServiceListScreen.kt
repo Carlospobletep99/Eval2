@@ -47,7 +47,10 @@ fun TechnicianDashboard(vm: ServiceViewModel, nav: NavController) {
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text("Panel de Técnico", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()){
              Button(onClick = { nav.navigate("service/new") }) {
                 Text("Crear Servicio")
@@ -84,7 +87,12 @@ fun ClientServiceList(vm: ServiceViewModel) {
     val services by vm.services.collectAsState()
     LaunchedEffect(Unit) { vm.cargar() }
 
-    Column(Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Nuestros Servicios", style = MaterialTheme.typography.headlineMedium)
+        Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(services) { s ->
                 ElevatedCard(modifier = Modifier.fillMaxWidth()) {

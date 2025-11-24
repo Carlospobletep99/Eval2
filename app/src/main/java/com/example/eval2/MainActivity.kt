@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
@@ -51,6 +54,33 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 var isLoading by remember { mutableStateOf(true) }
+                var showLogoutDialog by remember { mutableStateOf(false) }
+                val context = LocalContext.current
+
+                val logoutAction = {
+                    val intent = Intent(context, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
+                }
+
+                if (showLogoutDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showLogoutDialog = false },
+                        title = { Text("Confirmar Cierre de Sesión") },
+                        text = { Text("¿Estás seguro de que quieres cerrar sesión?") },
+                        confirmButton = {
+                            Button(onClick = { logoutAction() }) {
+                                Text("Aceptar")
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = { showLogoutDialog = false }) {
+                                Text("Cancelar")
+                            }
+                        }
+                    )
+                }
 
                 LaunchedEffect(Unit) {
                     delay(1500)
@@ -68,8 +98,12 @@ class MainActivity : ComponentActivity() {
                         val navBackStackEntry by nav.currentBackStackEntryAsState()
                         val currentRoute = navBackStackEntry?.destination?.route
 
+                        if (currentRoute == "main_screen") {
+                            BackHandler { showLogoutDialog = true }
+                        }
+
                         Scaffold(
-                            topBar = { TopBar(nav, modoTecnico) },
+                            topBar = { TopBar(nav, modoTecnico) { showLogoutDialog = true } },
                             floatingActionButton = {
                                 if (currentRoute == "main_screen" && !modoTecnico) {
                                     ExtendedFloatingActionButton(
@@ -127,8 +161,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(nav: NavController, modoTecnico: Boolean) {
-    val context = LocalContext.current
+fun TopBar(nav: NavController, modoTecnico: Boolean, onLogoutClick: () -> Unit) {
     val navBackStackEntry by nav.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val showBackButton = currentRoute != "main_screen"
@@ -158,12 +191,7 @@ fun TopBar(nav: NavController, modoTecnico: Boolean) {
                     Text("Mis Órdenes")
                 }
             }
-            IconButton(onClick = {
-                val intent = Intent(context, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                context.startActivity(intent)
-                (context as? ComponentActivity)?.finish()
-            }) {
+            IconButton(onClick = onLogoutClick) {
                 Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Cerrar Sesión")
             }
         }

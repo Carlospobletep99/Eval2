@@ -82,7 +82,12 @@ class OrderViewModel(private val repo: OrderRepository, private val userDao: Use
                 )
             )
             cargarOrdenes()
+            limpiar()
         }
+    }
+
+    fun limpiar() {
+        _state.update { OrderUIState() }
     }
 
     fun cargarOrdenes() {

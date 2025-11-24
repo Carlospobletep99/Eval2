@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.example.eval2.model.ServiceOrder
 import com.example.eval2.view.components.SmartImage
 import com.example.eval2.viewmodel.OrderViewModel
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +27,9 @@ fun OrderListScreen(vm: OrderViewModel, modoTecnico: Boolean, clientName: String
     }
 
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        val title = if (modoTecnico) "Órdenes de Servicio" else "Mis Órdenes"
+        Text(title, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
+
         if (modoTecnico) {
             OutlinedTextField(
                 value = filtro, onValueChange = {
@@ -35,8 +39,6 @@ fun OrderListScreen(vm: OrderViewModel, modoTecnico: Boolean, clientName: String
                 label = { Text("Filtrar por cliente") },
                 modifier = Modifier.fillMaxWidth()
             )
-        } else {
-            Text("Mis Órdenes", style = MaterialTheme.typography.headlineMedium)
         }
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
