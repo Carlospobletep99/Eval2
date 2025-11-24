@@ -27,7 +27,7 @@ fun OrderListScreen(vm: OrderViewModel, modoTecnico: Boolean, clientName: String
     }
 
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        val title = if (modoTecnico) "Órdenes de Servicio" else "Mis Órdenes"
+        val title = if (modoTecnico) "Órdenes de clientes:" else "Mis órdenes:"
         Text(title, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
 
         if (modoTecnico) {
@@ -49,30 +49,43 @@ fun OrderListScreen(vm: OrderViewModel, modoTecnico: Boolean, clientName: String
     }
 }
 
+private fun formatStatusForDisplay(status: String): String {
+    return status.replace('_', ' ')
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OrderRow(o: ServiceOrder, modoTecnico: Boolean, onEstado: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    ElevatedCard {
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp)) {
             Text("${o.clientName} · ${o.scheduleDate}", style = MaterialTheme.typography.titleMedium)
-            Text("Estado: ${o.status}")
+            Text("Estado: ${formatStatusForDisplay(o.status)}")
             Text("Notas: ${o.notes}")
             o.photoUri?.let { uri ->
                 SmartImage(uri, onUri = {}, readOnly = true)
             }
-            Spacer(Modifier.height(8.dp))
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { if (modoTecnico) expanded = !expanded }) {
-                OutlinedTextField(
-                    value = o.status, onValueChange = {}, readOnly = true, label = { Text("Cambiar estado") },
-                    modifier = Modifier.menuAnchor().fillMaxWidth(),
-                    enabled = modoTecnico
-                )
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    listOf("PENDIENTE","EN_PROCESO","FINALIZADO").forEach { st ->
-                        DropdownMenuItem(text = { Text(st) }, onClick = {
-                            onEstado(st); expanded = false
-                        })
+
+            if (modoTecnico) {
+                Spacer(Modifier.height(8.dp))
+                ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+                    OutlinedTextField(
+                        value = formatStatusForDisplay(o.status),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Cambiar estado") },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        listOf("PENDIENTE","EN_PROCESO","FINALIZADO").forEach { st ->
+                            DropdownMenuItem(
+                                text = { Text(formatStatusForDisplay(st)) },
+                                onClick = {
+                                    onEstado(st)
+                                    expanded = false
+                                }
+                            )
+                        }
                     }
                 }
             }

@@ -40,25 +40,9 @@ class LoginActivity : ComponentActivity() {
                 var passwordError by remember { mutableStateOf<String?>(null) }
                 val context = LocalContext.current
 
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.mi_icono),
-                                        contentDescription = "Logo ServiTech",
-                                        modifier = Modifier.size(32.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("ServiTech")
-                                }
-                            }
-                        )
-                    }
-                ) { padding ->
+                Scaffold {
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp),
+                        modifier = Modifier.fillMaxSize().padding(it).padding(16.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {

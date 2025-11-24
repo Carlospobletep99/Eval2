@@ -13,11 +13,16 @@ import com.example.eval2.model.Service
 import com.example.eval2.viewmodel.ServiceViewModel
 
 @Composable
-fun ServiceListScreen(vm: ServiceViewModel, modoTecnico: Boolean, nav: NavController) {
+fun ServiceListScreen(
+    vm: ServiceViewModel,
+    modoTecnico: Boolean,
+    nav: NavController,
+    clientName: String? = null
+) {
     if (modoTecnico) {
         TechnicianDashboard(vm = vm, nav = nav)
     } else {
-        ClientServiceList(vm = vm)
+        ClientServiceList(vm = vm, clientName = clientName)
     }
 }
 
@@ -49,17 +54,19 @@ fun TechnicianDashboard(vm: ServiceViewModel, nav: NavController) {
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Panel de Técnico", style = MaterialTheme.typography.headlineMedium)
+        Text("Panel de técnico", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()){
              Button(onClick = { nav.navigate("service/new") }) {
-                Text("Crear Servicio")
+                Text("Crear servicio")
             }
             Button(onClick = { nav.navigate("orders") }) {
                 Text("Ver Órdenes")
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
+        Text("Servicios a ofrecer:", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(services) { s ->
                 ElevatedCard(modifier = Modifier.fillMaxWidth()) {
@@ -83,7 +90,7 @@ fun TechnicianDashboard(vm: ServiceViewModel, nav: NavController) {
 }
 
 @Composable
-fun ClientServiceList(vm: ServiceViewModel) {
+fun ClientServiceList(vm: ServiceViewModel, clientName: String?) {
     val services by vm.services.collectAsState()
     LaunchedEffect(Unit) { vm.cargar() }
 
@@ -91,7 +98,11 @@ fun ClientServiceList(vm: ServiceViewModel) {
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Nuestros Servicios", style = MaterialTheme.typography.headlineMedium)
+        clientName?.let {
+            Text("¡Hola, $it!", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        Text("Servicios a contratar:", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(services) { s ->

@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                 if (showLogoutDialog) {
                     AlertDialog(
                         onDismissRequest = { showLogoutDialog = false },
-                        title = { Text("Confirmar Cierre de Sesión") },
+                        title = { Text("Confirmar cierre de sesión") },
                         text = { Text("¿Estás seguro de que quieres cerrar sesión?") },
                         confirmButton = {
                             Button(onClick = { logoutAction() }) {
@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
                                     ExtendedFloatingActionButton(
                                         onClick = { nav.navigate("order/new") },
                                         icon = { Icon(Icons.Filled.Add, "Nueva orden") },
-                                        text = { Text("Nueva Orden") }
+                                        text = { Text("Nueva orden") }
                                     )
                                 }
                             }
@@ -120,7 +120,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(inner)
                             ) {
                                 composable("main_screen") {
-                                    ServiceListScreen(vm = serviceVM, modoTecnico = modoTecnico, nav = nav)
+                                    ServiceListScreen(vm = serviceVM, modoTecnico = modoTecnico, nav = nav, clientName = if (!modoTecnico) userName else null)
                                 }
                                 composable("service/new") {
                                     ServiceCreateScreen(vm = serviceVM, serviceId = null) { nav.popBackStack() }
@@ -188,11 +188,11 @@ fun TopBar(nav: NavController, modoTecnico: Boolean, onLogoutClick: () -> Unit) 
         actions = {
             if (currentRoute == "main_screen" && !modoTecnico) {
                 TextButton(onClick = { nav.navigate("orders") }) {
-                    Text("Mis Órdenes")
+                    Text("Mis órdenes")
                 }
             }
             IconButton(onClick = onLogoutClick) {
-                Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Cerrar Sesión")
+                Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Cerrar sesión")
             }
         }
     )

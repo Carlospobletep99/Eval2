@@ -34,9 +34,9 @@ fun ServiceCreateScreen(vm: ServiceViewModel, serviceId: Int?, onSaved: () -> Un
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(if (serviceId == null) "Nuevo Servicio" else "Editar Servicio", style = MaterialTheme.typography.headlineMedium)
+        Text(if (serviceId == null) "Nuevo servicio:" else "Editar servicio", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nombre del Servicio") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Nombre del servicio") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(value = price, onValueChange = { price = it }, label = { Text("Precio") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
@@ -52,6 +52,6 @@ fun ServiceCreateScreen(vm: ServiceViewModel, serviceId: Int?, onSaved: () -> Un
                 }
                 onSaved()
             }
-        }, modifier = Modifier.fillMaxWidth()) { Text("Guardar Servicio") }
+        }, modifier = Modifier.fillMaxWidth()) { Text("Guardar servicio") }
     }
 }

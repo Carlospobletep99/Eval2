@@ -25,7 +25,7 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
 
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
-        Text("Nueva Orden de Servicio", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
+        Text("Nueva orden de servicio:", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
 
         OutlinedTextField(
             value = st.clientName, onValueChange = {},
@@ -55,7 +55,7 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
 
         OutlinedTextField(
             value = st.scheduleDate, onValueChange = vm::onDateChange,
-            label = { Text("Fecha (yyyy-MM-dd)") }, isError = st.errors.scheduleDate != null,
+            label = { Text("Fecha (AAAA-MM-DD)") }, isError = st.errors.scheduleDate != null,
             supportingText = { st.errors.scheduleDate?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             modifier = Modifier.fillMaxWidth()
         )

@@ -89,7 +89,7 @@ class RegisterActivity : ComponentActivity() {
                         OutlinedTextField(value = password, onValueChange = { password = it; passwordError = null }, label = { Text("Contraseña") }, modifier = Modifier.fillMaxWidth(), isError = passwordError != null, visualTransformation = PasswordVisualTransformation())
                         passwordError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
                         Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(value = confirmPassword, onValueChange = { confirmPassword = it; confirmPasswordError = null }, label = { Text("Confirmar Contraseña") }, modifier = Modifier.fillMaxWidth(), isError = confirmPasswordError != null, visualTransformation = PasswordVisualTransformation())
+                        OutlinedTextField(value = confirmPassword, onValueChange = { confirmPassword = it; confirmPasswordError = null }, label = { Text("Confirmar contraseña") }, modifier = Modifier.fillMaxWidth(), isError = confirmPasswordError != null, visualTransformation = PasswordVisualTransformation())
                         confirmPasswordError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
@@ -106,7 +106,7 @@ class RegisterActivity : ComponentActivity() {
                                         if (userDao.findByEmail(email) == null) {
                                             val user = User(firstName = firstName, lastName = lastName, email = email, passwordHash = password, role = "cliente")
                                             userDao.insert(user)
-                                            Toast.makeText(context, "Registro Exitoso.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Registro exitoso.", Toast.LENGTH_SHORT).show()
                                             finish()
                                         } else {
                                             emailError = "El correo ya está registrado."
