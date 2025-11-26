@@ -8,6 +8,8 @@ data class ServiceOrder(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val clientName: String,
     val serviceId: Int,
+    val correoElectronico: String,
+    val numeroCelular: String,
     val status: String, // PENDIENTE | EN_PROCESO | FINALIZADO
     val scheduleDate: String, // yyyy-MM-dd
     val notes: String,

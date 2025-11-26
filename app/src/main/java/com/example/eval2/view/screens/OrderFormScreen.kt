@@ -1,9 +1,13 @@
 package com.example.eval2.view.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.eval2.viewmodel.OrderViewModel
 import com.example.eval2.viewmodel.ServiceViewModel
@@ -23,15 +27,26 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
         }
     }
 
-    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
 
         Text("Nueva orden de servicio:", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.align(Alignment.CenterHorizontally))
 
         OutlinedTextField(
             value = st.clientName, onValueChange = {},
-            readOnly = true, // Block editing
+            readOnly = true,
             label = { Text("Nombre cliente") }, isError = st.errors.clientName != null,
             supportingText = { st.errors.clientName?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = st.correoElectronico, onValueChange = {},
+            readOnly = true,
+            label = { Text("Correo electrónico") }, isError = st.errors.correoElectronico != null,
+            supportingText = { st.errors.correoElectronico?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -61,12 +76,26 @@ fun OrderFormScreen(vm: OrderViewModel, serviceVM: ServiceViewModel, userId: Int
         )
 
         OutlinedTextField(
+            value = st.numeroCelular,
+            onValueChange = {
+                if (it.all { char -> char.isDigit() }) {
+                    vm.onNumeroCelularChange(it)
+                }
+            },
+            label = { Text("Número de celular") },
+            isError = st.errors.numeroCelular != null,
+            supportingText = { st.errors.numeroCelular?.let { Text(it, color = MaterialTheme.colorScheme.error) } },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+        )
+
+        OutlinedTextField(
             value = st.notes, onValueChange = vm::onNotesChange,
             label = { Text("Notas") }, modifier = Modifier.fillMaxWidth()
         )
 
         Text("Adjuntar imagen (opcional)", style = MaterialTheme.typography.bodyLarge)
-        SmartImage(current = st.photoUri, onUri = vm::onPhotoChange)
+        SmartImage(current = st.photoUri, onUri = vm::onPhotoChange, readOnly = false)
 
         Button(onClick = {
             if (vm.validar()) {

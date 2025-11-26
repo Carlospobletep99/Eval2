@@ -52,6 +52,7 @@ class LoginActivity : ComponentActivity() {
                             modifier = Modifier.size(130.dp).clip(CircleShape)
                         )
                         Text("ServiTech", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(top = 16.dp))
+                        Text("¡Reparaciones tecnológicas a tu alcance!", style = MaterialTheme.typography.titleMedium)
                         Spacer(modifier = Modifier.height(32.dp))
 
                         OutlinedTextField(
@@ -79,7 +80,9 @@ class LoginActivity : ComponentActivity() {
                                 emailError = if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) "El email no es válido." else null
                                 passwordError = if (password.isBlank()) "La contraseña es requerida." else null
 
-                                if (email == "tecnico@gmail.com" && password == "123456") {
+                                val emailEnMinusculas = email.lowercase()
+
+                                if (emailEnMinusculas == "tecnico@gmail.com" && password == "123456") {
                                     Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(context, MainActivity::class.java)
                                     intent.putExtra("USER_ROLE", "tecnico")
@@ -87,7 +90,7 @@ class LoginActivity : ComponentActivity() {
                                     finish()
                                 } else if (emailError == null && passwordError == null) {
                                     lifecycleScope.launch {
-                                        val user = userDao.findByEmail(email)
+                                        val user = userDao.findByEmail(emailEnMinusculas)
                                         if (user != null && user.passwordHash == password) {
                                             Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                                             val intent = Intent(context, MainActivity::class.java)

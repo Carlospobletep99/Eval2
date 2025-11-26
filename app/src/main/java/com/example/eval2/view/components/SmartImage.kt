@@ -2,6 +2,7 @@ package com.example.eval2.view.components
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Environment
@@ -48,7 +49,13 @@ fun SmartImage(current: String?, onUri: (String?) -> Unit, readOnly: Boolean = f
 
     val pickImage = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { uri -> onUri(uri?.toString()) }
+    ) { uri ->
+        if (uri != null) {
+            val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            context.contentResolver.takePersistableUriPermission(uri, flags)
+        }
+        onUri(uri?.toString())
+    }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         if (current != null) {

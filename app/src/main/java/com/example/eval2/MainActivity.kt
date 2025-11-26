@@ -136,7 +136,12 @@ class MainActivity : ComponentActivity() {
                                     OrderFormScreen(vm = orderVM, serviceVM = serviceVM, userId = userId) { nav.popBackStack() }
                                 }
                                 composable("orders") {
-                                    OrderListScreen(vm = orderVM, modoTecnico = modoTecnico, clientName = if (!modoTecnico) userName else null)
+                                    OrderListScreen(
+                                        vm = orderVM,
+                                        serviceVM = serviceVM,
+                                        modoTecnico = modoTecnico,
+                                        clientName = if (!modoTecnico) userName else null
+                                    )
                                 }
                             }
                         }
