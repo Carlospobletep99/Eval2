@@ -77,12 +77,15 @@ class LoginActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                emailError = if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) "El email no es válido." else null
-                                passwordError = if (password.isBlank()) "La contraseña es requerida." else null
+                                val emailRecortado = email.trim()
+                                val passwordRecortada = password.trim()
 
-                                val emailEnMinusculas = email.lowercase()
+                                emailError = if (!Patterns.EMAIL_ADDRESS.matcher(emailRecortado).matches()) "El email no es válido." else null
+                                passwordError = if (passwordRecortada.isBlank()) "La contraseña es requerida." else null
 
-                                if (emailEnMinusculas == "tecnico@gmail.com" && password == "123456") {
+                                val emailEnMinusculas = emailRecortado.lowercase()
+
+                                if (emailEnMinusculas == "tecnico@gmail.com" && passwordRecortada == "123456") {
                                     Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(context, MainActivity::class.java)
                                     intent.putExtra("USER_ROLE", "tecnico")
@@ -91,7 +94,7 @@ class LoginActivity : ComponentActivity() {
                                 } else if (emailError == null && passwordError == null) {
                                     lifecycleScope.launch {
                                         val user = userDao.findByEmail(emailEnMinusculas)
-                                        if (user != null && user.passwordHash == password) {
+                                        if (user != null && user.passwordHash == passwordRecortada) {
                                             Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                                             val intent = Intent(context, MainActivity::class.java)
                                             intent.putExtra("USER_ROLE", user.role)

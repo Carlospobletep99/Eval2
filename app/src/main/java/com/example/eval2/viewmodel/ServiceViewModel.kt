@@ -16,14 +16,14 @@ class ServiceViewModel(private val repo: ServiceRepository) : ViewModel() {
 
     fun crear(name: String, desc: String, price: Double) {
         viewModelScope.launch {
-            repo.upsert(Service(name = name, description = desc, price = price))
+            repo.upsert(Service(name = name.trim(), description = desc.trim(), price = price))
             cargar()
         }
     }
 
     fun actualizar(id: Int, name: String, desc: String, price: Double) {
         viewModelScope.launch {
-            repo.upsert(Service(id = id, name = name, description = desc, price = price))
+            repo.upsert(Service(id = id, name = name.trim(), description = desc.trim(), price = price))
             cargar()
         }
     }

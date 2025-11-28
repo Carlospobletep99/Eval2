@@ -77,11 +77,14 @@ class OrderViewModel(private val repo: OrderRepository, private val userDao: Use
 
     fun validar(): Boolean {
         val s = _state.value
+        val fechaRecortada = s.scheduleDate.trim()
+        val celularRecortado = s.numeroCelular.trim()
+
         val errs = OrderErrors(
             clientName = if (s.clientName.isBlank()) "Obligatorio" else null,
             serviceId = if (s.serviceId == null) "Selecciona un servicio" else null,
-            scheduleDate = obtenerErrorDeFecha(s.scheduleDate),
-            numeroCelular = if (s.numeroCelular.isBlank()) "Obligatorio" else null,
+            scheduleDate = obtenerErrorDeFecha(fechaRecortada),
+            numeroCelular = if (celularRecortado.isBlank()) "Obligatorio" else null,
             correoElectronico = if (s.correoElectronico.isBlank()) "Obligatorio" else null
         )
         val hayErrores = listOfNotNull(
@@ -97,13 +100,13 @@ class OrderViewModel(private val repo: OrderRepository, private val userDao: Use
         viewModelScope.launch {
             repo.upsert(
                 ServiceOrder(
-                    clientName = s.clientName,
+                    clientName = s.clientName.trim(),
                     serviceId = s.serviceId!!,
-                    correoElectronico = s.correoElectronico,
-                    numeroCelular = s.numeroCelular,
+                    correoElectronico = s.correoElectronico.trim(),
+                    numeroCelular = s.numeroCelular.trim(),
                     status = "PENDIENTE",
-                    scheduleDate = s.scheduleDate,
-                    notes = s.notes,
+                    scheduleDate = s.scheduleDate.trim(),
+                    notes = s.notes.trim(),
                     photoUri = s.photoUri
                 )
             )

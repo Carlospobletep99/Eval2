@@ -94,17 +94,23 @@ class RegisterActivity : ComponentActivity() {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                firstNameError = if (firstName.isBlank()) "El nombre es requerido." else null
-                                lastNameError = if (lastName.isBlank()) "El apellido es requerido." else null
-                                emailError = if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) "El email no es válido." else null
-                                passwordError = if (password.length < 6) "La contraseña debe tener al menos 6 caracteres." else null
-                                confirmPasswordError = if (password != confirmPassword) "Las contraseñas no coinciden." else null
+                                val nombreRecortado = firstName.trim()
+                                val apellidoRecortado = lastName.trim()
+                                val emailRecortado = email.trim()
+                                val passwordRecortada = password.trim()
+                                val confirmPasswordRecortada = confirmPassword.trim()
+
+                                firstNameError = if (nombreRecortado.isBlank()) "El nombre es requerido." else null
+                                lastNameError = if (apellidoRecortado.isBlank()) "El apellido es requerido." else null
+                                emailError = if (!Patterns.EMAIL_ADDRESS.matcher(emailRecortado).matches()) "El email no es válido." else null
+                                passwordError = if (passwordRecortada.length < 6) "La contraseña debe tener al menos 6 caracteres." else null
+                                confirmPasswordError = if (passwordRecortada != confirmPasswordRecortada) "Las contraseñas no coinciden." else null
 
                                 val hasError = listOf(firstNameError, lastNameError, emailError, passwordError, confirmPasswordError).any { it != null }
                                 if (!hasError) {
                                     lifecycleScope.launch {
-                                        if (userDao.findByEmail(email) == null) {
-                                            val user = User(firstName = firstName, lastName = lastName, email = email, passwordHash = password, role = "cliente")
+                                        if (userDao.findByEmail(emailRecortado) == null) {
+                                            val user = User(firstName = nombreRecortado, lastName = apellidoRecortado, email = emailRecortado, passwordHash = passwordRecortada, role = "cliente")
                                             userDao.insert(user)
                                             Toast.makeText(context, "Registro exitoso.", Toast.LENGTH_SHORT).show()
                                             finish()
