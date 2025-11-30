@@ -37,6 +37,7 @@ import com.example.eval2.view.screens.OrderFormScreen
 import com.example.eval2.view.screens.OrderListScreen
 import com.example.eval2.view.screens.ServiceCreateScreen
 import com.example.eval2.view.screens.ServiceListScreen
+import com.example.eval2.viewmodel.JokeViewModel
 import com.example.eval2.viewmodel.OrderViewModel
 import com.example.eval2.viewmodel.ServiceViewModel
 import kotlinx.coroutines.delay
@@ -95,6 +96,7 @@ class MainActivity : ComponentActivity() {
                         val orderRepo = remember { OrderRepository(db.orderDao()) }
                         val serviceVM = remember { ServiceViewModel(serviceRepo) }
                         val orderVM = remember { OrderViewModel(orderRepo, db.userDao()) }
+                        val jokeVM = remember { JokeViewModel() } // <-- CREACIÓN DEL NUEVO VIEWMODEL
                         val navBackStackEntry by nav.currentBackStackEntryAsState()
                         val currentRoute = navBackStackEntry?.destination?.route
 
@@ -120,7 +122,13 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.padding(inner)
                             ) {
                                 composable("main_screen") {
-                                    ServiceListScreen(vm = serviceVM, modoTecnico = modoTecnico, nav = nav, clientName = if (!modoTecnico) userName else null)
+                                    ServiceListScreen(
+                                        serviceVM = serviceVM,
+                                        jokeVM = jokeVM, // PASANDO EL NUEVO VIEWMODEL
+                                        modoTecnico = modoTecnico,
+                                        nav = nav,
+                                        clientName = if (!modoTecnico) userName else null
+                                    )
                                 }
                                 composable("service/new") {
                                     ServiceCreateScreen(vm = serviceVM, serviceId = null) { nav.popBackStack() }

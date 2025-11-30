@@ -8,11 +8,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// Este ViewModel ahora solo se preocupa de los Servicios xd
 class ServiceViewModel(private val repo: ServiceRepository) : ViewModel() {
+
     private val _services = MutableStateFlow<List<Service>>(emptyList())
     val services: StateFlow<List<Service>> = _services
 
-    fun cargar() { viewModelScope.launch { _services.value = repo.getAll() } }
+    // Su única responsabilidad al cargar es obtener los servicios.
+    fun cargar() {
+        viewModelScope.launch {
+            _services.value = repo.getAll()
+        }
+    }
 
     fun crear(name: String, desc: String, price: Double) {
         viewModelScope.launch {
