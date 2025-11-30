@@ -1,7 +1,8 @@
 package com.example.eval2.repository
 
+import android.util.Log
 import com.example.eval2.model.Service
-import com.example.eval2.model.ServiceDao // Ya no lo usaremos, pero lo dejo por si acaso
+import com.example.eval2.model.ServiceDao
 import com.example.eval2.network.RetrofitClient
 
 class ServiceRepository(private val dao: ServiceDao) {
@@ -12,21 +13,29 @@ class ServiceRepository(private val dao: ServiceDao) {
         return try {
             api.getAllServices()
         } catch (e: Exception) {
-            emptyList() // O manejar el error (ej. mostrar toast)
+            Log.e("API_ERROR", "Error al obtener servicios: ${e.message}")
+            emptyList() // Si falla, devolvemos lista vacía para no romper la UI
         }
     }
 
     suspend fun upsert(service: Service) {
-        if (service.id == 0) {
-            // Si el ID es 0, es nuevo -> Usamos POST (Crear)
-            api.createService(service)
-        } else {
-            // Si hay ID, ya existe -> Usamos PUT (Actualizar)
-            api.updateService(service.id, service)
+        try {
+            if (service.id == 0) {
+                api.createService(service)
+            } else {
+                api.updateService(service.id, service)
+            }
+        } catch (e: Exception) {
+            Log.e("API_ERROR", "Error al guardar servicio: ${e.message}")
+            // Evitamos que la app explote, solo logueamos el error xd
         }
     }
 
     suspend fun delete(service: Service) {
-        api.deleteService(service.id)
+        try {
+            api.deleteService(service.id)
+        } catch (e: Exception) {
+            Log.e("API_ERROR", "Error al eliminar: ${e.message}")
+        }
     }
 }
